@@ -30,6 +30,11 @@ Homebrew is the best way to install Node on OS X:
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     brew install node
     npm install -g coffee
+    
+Install node modules:
+    
+    npm install
+    pushd capture; npm install; popd
 
 Extract the card data with disunity:
 
