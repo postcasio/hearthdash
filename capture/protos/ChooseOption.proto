@@ -1,0 +1,9 @@
+import "protos/Option.proto";
+
+message ChooseOption {
+	required int32 id = 1;
+	optional int32 index = 2;
+	optional int32 target = 3;
+	optional int32 suboption = 4;
+	optional int32 position = 5;
+}

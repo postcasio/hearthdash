@@ -1,0 +1,4 @@
+message PowerHistoryHide {
+	required int32 entity = 1;
+	required int32 zone = 2;
+}

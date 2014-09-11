@@ -1,0 +1,17 @@
+message PowerHistoryStart {
+	enum Type {
+		ATTACK = 1;
+		CONTINUOUS = 2;
+		POWER = 3;
+		SCRIPT = 4;
+		TRIGGER = 5;
+		DEATHS = 6;
+		PLAY = 7;
+		FATIGUE = 8;
+	}
+
+	required Type type = 1;
+	optional int32 index = 2;
+	optional int32 source = 3;
+	optional int32 target = 4;
+}

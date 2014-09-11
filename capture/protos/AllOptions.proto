@@ -1,0 +1,6 @@
+import "protos/Option.proto";
+
+message AllOptions {
+	required int32 id = 1;
+	repeated Option options = 2;
+}

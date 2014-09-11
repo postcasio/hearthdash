@@ -1,0 +1,4 @@
+message Tag {
+	optional int32 name = 1;
+	optional int32 value = 2;
+}

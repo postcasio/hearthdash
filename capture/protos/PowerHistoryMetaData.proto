@@ -1,0 +1,10 @@
+message PowerHistoryMetaData {
+	enum MetaType {
+		META_TARGET = 0;
+		META_DAMAGE = 1;
+		META_HEALING = 2;
+	}
+	repeated int32 info = 2;
+	optional MetaType type = 3;
+	optional int32 data = 4;
+}

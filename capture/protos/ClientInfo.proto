@@ -1,0 +1,4 @@
+message ClientInfo {
+	repeated int32 pieces = 1;
+	required int32 cardBack = 2;
+}

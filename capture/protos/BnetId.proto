@@ -1,0 +1,4 @@
+message BnetId {
+	required int32 hi = 1;
+	required int32 lo = 2;
+}

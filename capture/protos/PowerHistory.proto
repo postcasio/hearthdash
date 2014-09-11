@@ -1,0 +1,5 @@
+import "protos/PowerHistoryData.proto";
+
+message PowerHistory {
+	repeated PowerHistoryData list = 1;
+}

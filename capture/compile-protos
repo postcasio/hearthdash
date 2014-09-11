@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for prot in protos/*.proto; do
+	protoc --descriptor_set_out=descriptors/`basename $prot .proto`.desc --include_imports $prot
+done

@@ -1,0 +1,16 @@
+{
+  "name": "hearthdash-capture",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src/capture.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cap": "0.0.10",
+    "minimist": "^1.1.0",
+    "node-protobuf": "^1.2.1"
+  }
+}

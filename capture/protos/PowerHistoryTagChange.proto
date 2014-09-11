@@ -1,0 +1,5 @@
+message PowerHistoryTagChange {
+	required int32 id = 1;
+	required int32 tag = 2;
+	required int32 value = 3;
+}

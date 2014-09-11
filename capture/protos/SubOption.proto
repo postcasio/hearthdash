@@ -1,0 +1,4 @@
+message SubOption {
+	required int32 id = 1;
+	optional int32 targets = 3;
+}

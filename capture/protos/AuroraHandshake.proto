@@ -1,0 +1,5 @@
+message AuroraHandshake {
+	required int32 gameHandle = 1;
+	required string password = 2;
+	required int64 clientHandle = 3; 
+}

@@ -1,0 +1,9 @@
+import "protos/BnetId.proto";
+import "protos/Entity.proto";
+
+message Player {
+	optional int32 id = 1;
+	optional BnetId accountId = 2;
+	optional int32 cardBack = 3;
+	optional Entity entity = 4;
+}

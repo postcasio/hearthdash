@@ -1,0 +1,7 @@
+import "protos/Entity.proto";
+import "protos/Player.proto";
+
+message StartGameState {
+	optional Entity gameEntity = 1;
+	repeated Player players = 2;
+}
