@@ -2,13 +2,9 @@
 
 Hearthdash is a card tracking application for Hearthstone.
 
-<div style="float: left; width: 50%; text-align: center;">
-	![Screenshot](images/game.png)
-</div>
-<div style="float: left; width: 50%; text-align: center;">
-	![Deck editor](images/deck.png)
-</div>
-<br style="clear: both;">
+![Screenshot](https://github.com/postcasio/hearthdash/raw/master/images/game.png)
+
+![Deck editor](https://github.com/postcasio/hearthdash/raw/master/images/deck.png)
 
 ## Features
 
