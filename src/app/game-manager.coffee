@@ -11,6 +11,19 @@ zones =
 	SETASIDE: 6
 	SECRET: 7
 
+cardTypes =
+	INVALID: 0
+	GAME: 1
+	PLAYER: 2
+	HERO: 3
+	MINION: 4
+	ABILITY: 5
+	ENCHANTMENT: 6
+	WEAPON: 7
+	ITEM: 8
+	TOKEN: 9
+	HERO_POWER: 10
+
 module.exports = class GameManager
 	entities: {}
 	finishedSetup: false
@@ -137,7 +150,8 @@ module.exports = class GameManager
 				when zones.HAND
 					size = @gameView.opponentHandView.addCard entity.name
 				when zones.PLAY
-					size = @gameView.opponentHistoryView.addCard entity.name
+					if entity.getCardType() in [cardTypes.MINION, cardTypes.ABILITY, cardTypes.WEAPON]
+						size = @gameView.opponentHistoryView.addCard entity.name
 
 
 
@@ -196,3 +210,4 @@ class Entity
 
 	getZone: -> @tags.ZONE
 	getController: -> @tags.CONTROLLER
+	getCardType: -> @tags.CARDTYPE
