@@ -12,8 +12,10 @@ DeckManager = require './deck-manager'
 GameManager = require './game-manager'
 AlertsView = require './alerts-view'
 
-module.exports = class HearthDash
+{Emitter} = require 'emissary'
 
+module.exports = class HearthDash
+	Emitter.includeInto this
 	constructor: ->
 		@rootPath = path.resolve path.join __dirname, '..', '..'
 		@dataPath = @getDataPath()
@@ -21,12 +23,20 @@ module.exports = class HearthDash
 		unless fs.existsSync(@dataPath)
 			fs.mkdirSync @dataPath
 
-		configPath = path.join @dataPath, 'config.cson'
+		@configPath = path.join @dataPath, 'config.cson'
 
-		if fs.existsSync configPath
-			@config = season.readFileSync configPath
+		if fs.existsSync @configPath
+			@config = season.readFileSync @configPath
 		else
 			@config = {}
+
+	saveConfig: ->
+		season.writeFileSync @configPath, @config
+
+	setConfig: (key, value) ->
+		@config[key] = value
+		@saveConfig()
+		@emit 'config-changed:' + key, value
 
 	initialize: ->
 		@cardManager = new CardManager this

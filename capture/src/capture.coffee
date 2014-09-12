@@ -1,11 +1,11 @@
-{Cap, decoders} = require 'cap'
+{Cap, decoders, deviceList} = require 'cap'
 minimist = require 'minimist'
 parse = require './parse'
 
 argv = minimist process.argv.slice 2
 
 if argv['list-devices']
-	process.stdout.write JSON.stringify c.deviceList()
+	process.stdout.write JSON.stringify deviceList()
 
 else
 	device = argv['device']
@@ -13,6 +13,9 @@ else
 	filter = 'tcp port 1119'
 	bufSize = 10 * 1024 * 1024
 	buffer = new Buffer 65535
+
+	process.on 'exit', ->
+		cap.close()
 
 	linkType = cap.open device, filter, bufSize, buffer
 

@@ -172,9 +172,6 @@ module.exports = class GameManager
 					size = @gameView.opponentDeckView.addCard entity.name
 				when zones.HAND
 					size = @gameView.opponentHandView.addCard entity.name
-				when zones.PLAY
-					if @finishedSetup
-						size = @gameView.opponentHistoryView.addCard entity.name
 
 	onCreateGame: (message) ->
 

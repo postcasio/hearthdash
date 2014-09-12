@@ -104,7 +104,8 @@ parsePacket = (type, buffer, size) ->
 				data: proto.proto.parse buffer, proto.schema
 			process.stdout.write "\n"
 		catch
-			process.stderr.write "Packet type failed size #{size} #{reverse_packet_types[type]}\n#{buffer.toString 'hex'}\n"
+			process.stderr.write "Failed to parse packet\n"
+			#process.stderr.write "Packet type failed size #{size} #{reverse_packet_types[type]}\n#{buffer.toString 'hex'}\n"
 
 module.exports = (buffer) ->
 	stream = Buffer.concat [stream, buffer]

@@ -1,7 +1,7 @@
 {Emitter} = require 'emissary'
 {spawn} = require 'child_process'
 path = require 'path'
-
+{$} = require 'space-pen'
 tags =
 	204: 'STATE'
 	20: 'TURN'
@@ -182,37 +182,75 @@ module.exports = class PacketInterface
 	constructor: (@dash) ->
 		@proc = null
 		@buffer = ''
+		@errBuffer = ''
 
 	watch: ->
-		capturePath = path.resolve path.join __dirname, '..', '..', 'capture'
+		@capturePath = path.resolve path.join __dirname, '..', '..', 'capture'
 
-		@proc = spawn '/usr/local/bin/coffee', [path.join(capturePath, 'src', 'capture.coffee'), '--device=en0'],
-			cwd: capturePath
-		#@proc = spawn 'cat', ['capture.json']
+		@proc = null
 
-		@proc.stdout.on 'data', (data) =>
-			@buffer += data
-			@checkForFullMessage()
+		@start()
 
-		@proc.stderr.on 'data', (data) ->
+		$(window).on 'onbeforeunload', =>
+			console.log 'stopping interface'
+			@stop()
+
+		dash.on 'config-changed:networkInterface', (value) =>
+			@restart()
+
+	stop: ->
+		if @proc
+			@proc.kill 'SIGINT'
+
+	restart: ->
+		@stop()
+		@start()
+
+	start: ->
+		if dash.config.networkInterface
+			@proc = spawn '/usr/local/bin/coffee', [path.join(@capturePath, 'src', 'capture.coffee'), '--device=' + dash.config.networkInterface],
+				cwd: @capturePath
+
+			@proc.stdout.on 'data', (data) =>
+				@buffer += data
+				@checkBuffer()
+
+			@proc.stderr.on 'data', (data) =>
+				@errBuffer += data
+				@checkBuffer()
+
 			dash.alertsView.createAlert
-				heading: 'Packet interface'
-				text: data.toString('utf8')
+				heading: 'Packet capturing'
+				text: 'Listening on interface ' + dash.config.networkInterface
 
-		dash.alertsView.createAlert
-			heading: 'Packet interface'
-			text: 'Listening on interface en0'
+	checkBuffer: ->
+		for bufferName in ['buffer', 'errBuffer']
+			buffer = this[bufferName]
 
-	checkForFullMessage: ->
-		nl = @buffer.indexOf "\n"
+			nl = buffer.indexOf "\n"
 
-		while nl > -1
-			message = @buffer.slice 0, nl + 1
-			@processMessage JSON.parse message
-			@buffer = @buffer.slice nl + 1
+			while nl > -1
+				message = buffer.slice 0, nl + 1
 
-			nl = @buffer.indexOf "\n"
+				if bufferName is 'buffer'
+					@processMessage JSON.parse message
+				else
+					dash.alertsView.createAlert
+						heading: 'Packet capturing'
+						text: message
 
+				this[bufferName] = buffer = buffer.slice nl + 1
+
+				nl = buffer.indexOf "\n"
+
+		undefined
+
+	humanizeTags: (tagset) ->
+		humanized = {}
+		for tag in tagset
+			humanized[tags[tag.name]] = tag.value
+
+		humanized
 
 	processMessage: (message) ->
 		switch message.type
@@ -237,24 +275,16 @@ module.exports = class PacketInterface
 							value: power.tagChange.value
 
 					if power.showEntity
-						tagsnames = {}
-						for tag in power.showEntity.tags
-							tagsnames[tags[tag.name]] = tag.value
-
 						@emit 'show-entity',
 							id: power.showEntity.id
 							name: power.showEntity.name
-							tags: tagsnames
+							tags: @humanizeTags power.showEntity.tags
 
 					if power.fullEntity
-						console.log power
-						tagsnames = {}
-						for tag in power.fullEntity.tags
-							tagsnames[tags[tag.name]] = tag.value
-
 						@emit 'full-entity',
 							id: power.fullEntity.id
 							name: power.fullEntity.name
-							tags: tagsnames
+							tags: @humanizeTags power.fullEntity.tags
+
 					if power.createGame
 						@emit 'create-game', power.createGame

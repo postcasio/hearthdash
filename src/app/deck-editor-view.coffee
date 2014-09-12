@@ -3,10 +3,8 @@ DeckView = require './deck-view'
 debounce = require 'debounce'
 
 module.exports = class DeckEditorView extends View
-
-
 	@content: (params) ->
-		@div class: 'deck-editor-view', =>
+		@div class: 'deck-editor-view view', =>
 			@div class: 'deck-name-box', =>
 				@input outlet: 'deckName', placeholder: 'Name', class: 'name-box'
 				@select outlet: 'deckClass', class: 'class-select', =>
@@ -20,7 +18,8 @@ module.exports = class DeckEditorView extends View
 			@div class: 'search', =>
 				@input outlet: 'search', placeholder: 'Search', class: 'search-box'
 				@subview 'searchResults', new DeckView name: 'Search Results'
-	initialized: false
+
+	getTitle: -> 'Decks'
 
 	attachEvents: ->
 		dash.dashboardView.deckSelector.on 'deck-changed', (event) =>
