@@ -20,7 +20,7 @@ else
 	linkType = cap.open device, filter, bufSize, buffer
 
 	if linkType isnt 'ETHERNET'
-		process.stdout.write JSON.stringify error: "Invalid link type #{linkType}"
+		process.stderr.write "Invalid link type #{linkType}\n"
 		cap.close()
 		return
 
