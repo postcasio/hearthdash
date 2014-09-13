@@ -1,0 +1,21 @@
+
+÷
+protos/PowerHistoryStart.proto"Ô
+PowerHistoryStart%
+type (2.PowerHistoryStart.Type
+index (
+source (
+target ("i
+Type
+
+ATTACK
+
+CONTINUOUS	
+POWER
+
+SCRIPT
+TRIGGER
+
+DEATHS
+PLAY
+FATIGUE

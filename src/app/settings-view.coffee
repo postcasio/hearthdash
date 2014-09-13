@@ -13,12 +13,32 @@ module.exports = class DeckEditorView extends View
 					id: 'networkInterface'
 					class: 'config-field'
 
+			@div class: 'setting', =>
+				@label for: 'nodePath', class: 'setting-name', 'Path to node'
+				@input
+					outlet: 'nodePath'
+					name: 'nodePath'
+					id: 'nodePath'
+					class: 'config-field'
+					value: dash.config.nodePath ? ''
+
 	getTitle: -> 'Settings'
 
 	initialize: ->
 
+		if dash.config.nodePath
+			@setNetworkInterfaces()
+
+		@on 'change', '.config-field', ->
+			dash.setConfig $(this).attr('name'), $(this).val()
+			dash.saveConfig()
+
+		dash.on 'config-changed:nodePath', =>
+			@setNetworkInterfaces()
+
+	setNetworkInterfaces: ->
 		capturePath = path.resolve path.join __dirname, '..', '..', 'capture'
-		@proc = spawn '/usr/local/bin/coffee', [path.join(capturePath, 'src', 'capture.coffee'), '--list-devices'],
+		@proc = spawn dash.config.nodePath, [path.join(capturePath, 'src', 'capture.js'), '--list-devices'],
 			cwd: capturePath
 		buffer = ''
 
@@ -35,6 +55,7 @@ module.exports = class DeckEditorView extends View
 			buffer += data
 
 		@proc.stdout.on 'close', =>
+			@networkInterface.empty()
 			devices = JSON.parse buffer
 			for device, i in devices
 				@networkInterface.append $$ ->
@@ -45,8 +66,3 @@ module.exports = class DeckEditorView extends View
 			unless dash.config.networkInterface
 				@networkInterface.change()
 				dash.saveConfig()
-
-
-		@on 'change', '.config-field', ->
-			dash.setConfig $(this).attr('name'), $(this).val()
-			dash.saveConfig()

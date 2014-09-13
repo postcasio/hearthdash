@@ -198,6 +198,9 @@ module.exports = class PacketInterface
 		dash.on 'config-changed:networkInterface', (value) =>
 			@restart()
 
+		dash.on 'config-changed:nodePath', (value) =>
+			@restart()
+
 	stop: ->
 		if @proc
 			@proc.kill 'SIGINT'
@@ -207,8 +210,8 @@ module.exports = class PacketInterface
 		@start()
 
 	start: ->
-		if dash.config.networkInterface
-			@proc = spawn '/usr/local/bin/coffee', [path.join(@capturePath, 'src', 'capture.coffee'), '--device=' + dash.config.networkInterface],
+		if dash.config.networkInterface and dash.config.nodePath
+			@proc = spawn dash.config.nodePath, [path.join(@capturePath, 'src', 'capture.js'), '--device=' + dash.config.networkInterface],
 				cwd: @capturePath
 
 			@proc.stdout.on 'data', (data) =>

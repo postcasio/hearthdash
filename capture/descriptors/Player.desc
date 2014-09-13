@@ -1,0 +1,27 @@
+
+7
+protos/BnetId.proto" 
+BnetId
+
+hi (
+
+lo (
+6
+protos/Tag.proto""
+Tag
+name (
+value (
+Q
+protos/Entity.protoprotos/Tag.proto"(
+Entity
+
+id (
+tags (2.Tag
+œ
+protos/Player.protoprotos/BnetId.protoprotos/Entity.proto"[
+Player
+
+id (
+	accountId (2.BnetId
+cardBack (
+entity (2.Entity

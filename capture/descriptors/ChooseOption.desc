@@ -1,0 +1,30 @@
+
+B
+protos/SubOption.proto"(
+	SubOption
+
+id (
+targets (
+ø
+protos/Option.protoprotos/SubOption.proto"è
+Option
+type (2.Option.Type
+
+mainOption (2
+.SubOption
+
+subOptions (2
+.SubOption")
+Type
+PASS
+END_TURN	
+POWER
+ê
+protos/ChooseOption.protoprotos/Option.proto"^
+ChooseOption
+
+id (
+index (
+target (
+	suboption (
+position (
