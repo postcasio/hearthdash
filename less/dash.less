@@ -7,6 +7,7 @@ html {
 	height: calc(~"100% - 49px");
 	margin-top: 49px;
 	overflow: hidden;
+
 }
 
 body {
@@ -162,7 +163,8 @@ h1 {
 
 	&:hover {
 		background: lighten(@background-color, 20%);
-
+		height: 53px;
+		transition: height 2s ease-in;
 		.card-image .fade {
 			background: linear-gradient(to right,
 				lighten(@background-color, 20%) 0,
@@ -221,6 +223,9 @@ h1 {
 		}
 	}
 
+	.card-description {
+		margin-top: 1px;
+	}
 
 }
 
