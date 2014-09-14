@@ -249,6 +249,8 @@ module.exports = class PacketInterface
 		undefined
 
 	humanizeTags: (tagset) ->
+		return {} unless tagset
+
 		humanized = {}
 		for tag in tagset
 			humanized[tags[tag.name]] = tag.value

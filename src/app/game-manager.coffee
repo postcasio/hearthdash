@@ -25,9 +25,12 @@ cardTypes =
 	HERO_POWER: 10
 
 module.exports = class GameManager
-	entities: {}
+	entities: null
 	finishedSetup: false
 	turns: 0
+	messageBuffer: null
+	foundPlayers: false
+	entityControllers = null
 
 	constructor: (@dash) ->
 		@packetInterface = new PacketInterface
@@ -41,8 +44,13 @@ module.exports = class GameManager
 
 		@packetInterface.watch()
 
+		@messageBuffer = []
+		@entityControllers = []
+
 	reset: ->
+		@messageBuffer = []
 		@entities = {}
+		@entityControllers = {}
 		@gameView = @dash.dashboardView.gameView
 
 		deck = @dash.dashboardView.deckSelector.getSelectedDeck()
@@ -59,6 +67,7 @@ module.exports = class GameManager
 
 		@finishedSetup = false
 		@turns = 0
+		@foundPlayers = false
 
 
 
@@ -70,6 +79,11 @@ module.exports = class GameManager
 		@reset()
 
 	onTagChange: (message) ->
+		unless @foundPlayers
+			@messageBuffer.push onTagChange: message
+
+			return
+
 		if message.tag == 'TURN_START'
 			if @gameView.opponentHandView.cardCount is 5 and not @finishedSetup
 				@gameView.opponentHandView.removeCard ''
@@ -83,13 +97,13 @@ module.exports = class GameManager
 		entity = @getEntity message, false
 
 		if message.tag == 'ZONE'
-			if entity.getController() == 2
+			if entity.getController() == @opponentControllerId
 				switch entity.getZone()
 					when zones.DECK
 						size = @gameView.opponentDeckView.removeCard entity.name
 					when zones.HAND
 						size = @gameView.opponentHandView.removeCard entity.name
-			else if entity.getController() == 1
+			else if entity.getController() == @playerControllerId
 				switch entity.getZone()
 					when zones.DECK
 						size = @gameView.playerDeckView.removeCard entity.name
@@ -98,7 +112,7 @@ module.exports = class GameManager
 
 			entity.setTag message.tag, message.value
 
-			if entity.getController() == 2
+			if entity.getController() == @opponentControllerId
 				switch entity.getZone()
 					when zones.DECK
 						size = @gameView.opponentDeckView.addCard entity.name
@@ -106,7 +120,7 @@ module.exports = class GameManager
 						size = @gameView.opponentHandView.addCard entity.name
 					when zones.PLAY
 						size = @gameView.opponentHistoryView.addCard entity.name
-			else if entity.getController() == 1
+			else if entity.getController() == @playerControllerId
 				switch entity.getZone()
 					when zones.DECK
 						size = @gameView.playerDeckView.addCard entity.name
@@ -117,15 +131,33 @@ module.exports = class GameManager
 
 
 	onShowEntity: (message) ->
+
+		unless @foundPlayers
+			@messageBuffer.push onShowEntity: message
+
+			if message.name and message.tags.ZONE is zones.HAND
+
+				@playerControllerId = @entityControllers[message.id]
+				@opponentControllerId = if @playerControllerId == 1 then 2 else 1
+				@foundPlayers = true
+
+				for message in @messageBuffer
+					for type, msg of message
+						@[type] msg
+
+				@messageBuffer = []
+
+			return
+
 		entity = @getEntity message, false
 
-		if entity.getController() == 1
+		if entity.getController() == @playerControllerId
 			switch entity.getZone()
 				when zones.DECK
 					size = @gameView.playerDeckView.removeCard message.name
 				when zones.HAND
 					size = @gameView.playerHandView.removeCard entity.name
-		else if entity.getController() == 2
+		else if entity.getController() == @opponentControllerId
 			switch entity.getZone()
 				when zones.DECK
 					size = @gameView.opponentDeckView.removeCard message.name
@@ -137,13 +169,13 @@ module.exports = class GameManager
 
 		entity.update message
 
-		if entity.getController() == 1
+		if entity.getController() == @playerControllerId
 			switch entity.getZone()
 				when zones.DECK
 					size = @gameView.playerDeckView.addCard entity.name
 				when zones.HAND
 					size = @gameView.playerHandView.addCard entity.name
-		else if entity.getController() == 2
+		else if entity.getController() == @opponentControllerId
 			switch entity.getZone()
 				when zones.DECK
 					size = @gameView.opponentDeckView.addCard entity.name
@@ -156,9 +188,18 @@ module.exports = class GameManager
 
 
 	onFullEntity: (message) ->
+
+		unless @foundPlayers
+			if message.tags.CONTROLLER
+				@entityControllers[message.id] = message.tags.CONTROLLER
+			@messageBuffer.push onFullEntity: message
+
+			return
+
+
 		entity = @getEntity message
 
-		if entity.getController() == 1
+		if entity.getController() == @playerControllerId
 			switch entity.getZone()
 				when zones.DECK
 					if @finishedSetup
@@ -166,7 +207,7 @@ module.exports = class GameManager
 				when zones.HAND
 					size = @gameView.playerHandView.addCard entity.name
 
-		if entity.getController() == 2
+		if entity.getController() == @opponentControllerId
 			switch entity.getZone()
 				when zones.DECK
 					size = @gameView.opponentDeckView.addCard entity.name
