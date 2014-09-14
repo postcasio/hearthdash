@@ -210,8 +210,8 @@ module.exports = class PacketInterface
 		@start()
 
 	start: ->
-		if dash.config.networkInterface and dash.config.nodePath
-			@proc = spawn dash.config.nodePath, [path.join(@capturePath, 'src', 'capture.js'), '--device=' + dash.config.networkInterface],
+		if dash.config.networkInterface and dash.nodePath
+			@proc = spawn dash.nodePath, [path.join(@capturePath, 'src', 'capture.js'), '--device=' + dash.config.networkInterface],
 				cwd: @capturePath
 
 			@proc.stdout.on 'data', (data) =>
@@ -241,6 +241,7 @@ module.exports = class PacketInterface
 					dash.alertsView.createAlert
 						heading: 'Packet capturing'
 						text: message
+					console.log message
 
 				this[bufferName] = buffer = buffer.slice nl + 1
 

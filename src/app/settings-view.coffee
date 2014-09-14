@@ -2,7 +2,7 @@
 _ = require 'underscore'
 {spawn} = require 'child_process'
 path = require 'path'
-module.exports = class DeckEditorView extends View
+module.exports = class SettingsView extends View
 	@content: (params) ->
 		@div class: 'settings-view view', =>
 			@div class: 'setting', =>
@@ -13,21 +13,12 @@ module.exports = class DeckEditorView extends View
 					id: 'networkInterface'
 					class: 'config-field'
 
-			@div class: 'setting', =>
-				@label for: 'nodePath', class: 'setting-name', 'Path to node'
-				@input
-					outlet: 'nodePath'
-					name: 'nodePath'
-					id: 'nodePath'
-					class: 'config-field'
-					value: dash.config.nodePath ? ''
 
 	getTitle: -> 'Settings'
 
 	initialize: ->
 
-		if dash.config.nodePath
-			@setNetworkInterfaces()
+		@setNetworkInterfaces()
 
 		@on 'change', '.config-field', ->
 			dash.setConfig $(this).attr('name'), $(this).val()
@@ -38,7 +29,7 @@ module.exports = class DeckEditorView extends View
 
 	setNetworkInterfaces: ->
 		capturePath = path.resolve path.join __dirname, '..', '..', 'capture'
-		@proc = spawn dash.config.nodePath, [path.join(capturePath, 'src', 'capture.js'), '--list-devices'],
+		@proc = spawn dash.nodePath, [path.join(capturePath, 'src', 'capture.js'), '--list-devices'],
 			cwd: capturePath
 		buffer = ''
 

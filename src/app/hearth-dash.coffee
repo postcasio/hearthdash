@@ -19,6 +19,7 @@ module.exports = class HearthDash
 	constructor: ->
 		@rootPath = path.resolve path.join __dirname, '..', '..'
 		@dataPath = @getDataPath()
+		@nodePath = path.resolve path.join __dirname, '..', '..', (if process.platform is 'darwin' then 'node' else 'node.exe')
 
 		unless fs.existsSync(@dataPath)
 			fs.mkdirSync @dataPath

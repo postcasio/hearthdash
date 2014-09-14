@@ -7,6 +7,8 @@ minimist = require 'minimist'
 
 argv = minimist(process.argv.slice(2))
 
+buildTarget = argv.target ? process.platform
+
 buildPath = path.join __dirname, '..', 'build'
 
 unless fs.existsSync buildPath
@@ -14,40 +16,51 @@ unless fs.existsSync buildPath
 
 atomShellVersion = 'v0.16.2'
 disunityVersion = 'v0.3.2'
+nodeVersion = 'v' + process.versions.node
 
-arch = if process.platform is 'win32' then 'ia32' else process.arch
-atomShellPath = "https://github.com/atom/atom-shell/releases/download/#{atomShellVersion}/atom-shell-#{atomShellVersion}-#{process.platform}-#{arch}.zip"
+arch = if buildTarget is 'win32' then 'ia32' else process.arch
+atomShellUrl = "https://github.com/atom/atom-shell/releases/download/#{atomShellVersion}/atom-shell-#{atomShellVersion}-#{buildTarget}-#{arch}.zip"
 
-atomShellZipPath = path.join buildPath, "atom-shell-#{atomShellVersion}-#{process.platform}-#{arch}.zip"
+atomShellZipPath = path.join buildPath, "atom-shell-#{atomShellVersion}-#{buildTarget}-#{arch}.zip"
 atomShellExtractPath = buildPath
-disunityPath = "https://github.com/ata4/disunity/releases/download/#{disunityVersion}/disunity_#{disunityVersion}.zip"
+disunityUrl = "https://github.com/ata4/disunity/releases/download/#{disunityVersion}/disunity_#{disunityVersion}.zip"
 disunityZipPath = path.join buildPath, "disunity-#{disunityVersion}.zip"
 disunityJarPath = path.join buildPath, "disunity.jar"
 
-switch process.platform
+
+switch buildTarget
 	when 'darwin'
+		nodeUrl = "http://nodejs.org/dist/#{nodeVersion}/node-#{nodeVersion}-darwin-#{arch}.tar.gz"
+		nodePath = path.join buildPath, "node-#{nodeVersion}-darwin-#{arch}.tar.gz"
+		nodeExtractedPath = path.join buildPath, "node-#{nodeVersion}-darwin-#{arch}", 'bin', 'node'
+		nodeRequiresExtraction = true
 		cardXmlPath = argv['card-xml-path'] ? '/Applications/Hearthstone/Data/OSX/cardxml0.unity3d'
 		cardXmlExtractedPath = path.join path.dirname(cardXmlPath), 'cardxml0', 'CAB-cardxml0', 'TextAsset'
 		atomShellExecutablePath = path.join(atomShellExtractPath, 'Atom.app')
 		executablePath = path.join(atomShellExtractPath, 'Hearthdash.app')
 		atomShellResourcesPath = path.join(atomShellExecutablePath, 'Contents', 'Resources', 'app')
+		nodeDestinationPath = atomShellResourcesPath
 		apmPath = path.join(__dirname, '..', 'node_modules', 'atom-package-manager', 'bin', 'apm')
 		disunityExecutablePath = path.join buildPath, 'disunity.sh'
 		disunityShell = 'bash'
 
 	when 'win32'
+		nodeUrl = 'http://nodejs.org/dist/v0.10.31/node.exe'
+		nodePath = path.join buildPath, 'node.exe'
+		nodeRequiresExtraction = false
 		cardXmlPath = argv['card-xml-path']
 		cardXmlExtractedPath = path.join path.dirname(cardXmlPath), 'cardxml0', 'CAB-cardxml0', 'TextAsset'
 		atomShellExecutablePath = path.join(atomShellExtractPath, 'atom.exe')
 		executablePath = path.join(atomShellExtractPath, 'Hearthdash.exe')
 		atomShellResourcesPath = path.join(atomShellExtractPath, 'resources/app')
+		nodeDestinationPath = atomShellResourcesPath
 		apmPath = path.join(__dirname, '..', 'node_modules', 'atom-package-manager', 'bin', 'apm.cmd')
 		disunityExecutablePath = path.join buildPath, 'disunity.bat'
 		disunityShell = 'cmd'
 
 passthrough = (proc) ->
 	proc.stdout.on 'data', (data) -> console.log data.toString('utf8')
-	proc.stdin.on 'data', (data) -> console.log data.toString('utf8')
+	proc.stderr.on 'data', (data) -> console.log data.toString('utf8')
 
 rename = ->
 	proc = spawn 'mv', [atomShellExecutablePath, executablePath]
@@ -58,23 +71,26 @@ copyFiles = ->
 	unless fs.existsSync atomShellResourcesPath
 		fs.mkdirSync atomShellResourcesPath
 
-	index = 0
-	files = ['capture', 'data', 'images', 'less', 'node_modules', 'src', 'static', 'package.json']
+	proc = spawn 'cp', [(if nodeRequiresExtraction then nodeExtractedPath else nodePath), nodeDestinationPath]
+	passthrough proc
+	proc.on 'exit', ->
+		index = 0
+		files = ['capture', 'data', 'images', 'less', 'node_modules', 'src', 'static', 'package.json']
 
-	copy = ->
-		unless files[index].indexOf '.'
-			fs.mkdirSync path.join(atomShellResourcesPath, files[index])
+		copy = ->
+			unless files[index].indexOf '.'
+				fs.mkdirSync path.join(atomShellResourcesPath, files[index])
 
-		proc = spawn 'cp', ['-R', path.join(__dirname, '..', files[index]), path.join(atomShellResourcesPath, files[index])]
+			proc = spawn 'cp', ['-R', path.join(__dirname, '..', files[index]), path.join(atomShellResourcesPath, files[index])]
 
-		proc.on 'exit', ->
-			index++
-			if index < files.length
-				process.nextTick copy
-			else
-				rename()
+			proc.on 'exit', ->
+				index++
+				if index < files.length
+					process.nextTick copy
+				else
+					rename()
 
-	copy()
+		copy()
 
 compileCapture = ->
 	console.log 'Compiling capture sources...'
@@ -98,7 +114,7 @@ downloadAtomShell = ->
 	else
 		console.log "Downloading atom-shell..."
 
-		pipe = request(atomShellPath).pipe(fs.createWriteStream(atomShellZipPath))
+		pipe = request(atomShellUrl).pipe(fs.createWriteStream(atomShellZipPath))
 		pipe.on 'error', (e) ->
 			throw e
 		pipe.on 'close', ->
@@ -110,7 +126,7 @@ downloadDisunity = ->
 		unzipDisunity()
 	else
 		console.log "Downloading disunity..."
-		pipe = request(disunityPath).pipe(fs.createWriteStream(disunityZipPath))
+		pipe = request(disunityUrl).pipe(fs.createWriteStream(disunityZipPath))
 		pipe.on 'close', ->
 			unzipDisunity()
 
@@ -132,6 +148,21 @@ extractCardData = ->
 		proc = spawn 'coffee', [path.join(__dirname, 'extract-card-data.coffee'), '--card-dir', path.join(cardXmlExtractedPath)]
 		console.log 'Converting...'
 		proc.on 'exit', ->
+			downloadNode()
+
+downloadNode = ->
+	console.log 'Downloading node...'
+	pipe = request(nodeUrl).pipe(fs.createWriteStream(nodePath))
+	pipe.on 'close', ->
+		if nodeRequiresExtraction
+
+			console.log 'Extracting...'
+			proc = spawn 'tar', ['-xzf', nodePath],
+				cwd: buildPath
+			passthrough proc
+			proc.on 'exit', ->
+				installApm()
+		else
 			installApm()
 
 installApm = ->
