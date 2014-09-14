@@ -1,6 +1,14 @@
 {View} = require 'space-pen'
 $ = require 'jquery'
 
+
+rarity =
+	1: 'Basic'
+	2: 'Common'
+	3: 'Rare'
+	4: 'Epic'
+	5: 'Legendary'
+
 module.exports = class CardView extends View
 	@content: (params) ->
 		@div class: 'card-view', =>
@@ -9,6 +17,10 @@ module.exports = class CardView extends View
 			@div class: 'card-cost', outlet: 'cardCost'
 			@div class: 'card-name', outlet: 'cardName'
 			@div class: 'card-count', outlet: 'cardCount'
+			@div class: 'card-description', =>
+				@span outlet: 'cardDescription'
+				@div class: 'card-stats', outlet: 'cardStats'
+
 
 	card: null
 	id: null
@@ -37,7 +49,20 @@ module.exports = class CardView extends View
 			else
 				@cardCount.text @count
 
+			if @card.text
+				@cardDescription.html @card.text.replace(/\$(\d+)/, "$1").replace('\n', "\n");
+
 			@cardName.text @card.name
+
+			stats = []
+
+			if @card.health
+				stats.push "<div class=\"atk-health\">#{@card.atk}/#{@card.health}</div>"
+
+			if rarity[@card.rarity]
+				stats.push "<div class=\"rarity rarity-#{rarity[@card.rarity].toLowerCase()}\">#{rarity[@card.rarity]}</div>"
+
+			@cardStats.html stats.join ""
 
 		if @id and not @art
 			@art = true

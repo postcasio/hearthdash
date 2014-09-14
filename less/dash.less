@@ -163,8 +163,7 @@ h1 {
 
 	&:hover {
 		background: lighten(@background-color, 20%);
-		height: 53px;
-		transition: height 2s ease-in;
+		overflow: visible;
 		.card-image .fade {
 			background: linear-gradient(to right,
 				lighten(@background-color, 20%) 0,
@@ -224,8 +223,53 @@ h1 {
 	}
 
 	.card-description {
-		margin-top: 1px;
+		position:absolute;
+		top: 27px;
+		line-height: 27px;
+		left: 0;
+		width: 100%;
+		height: auto;
+		background: fadeout(black, 20%);
+		z-index: 100;
+		padding: 0 7px;
+		margin-bottom: 1px;
+		box-sizing: border-box;
+		pointer-events: none;
+		opacity: 0;
+		b {
+			font-weight: bold;
+		}
+		.card-stats {
+			.atk-health {
+				font-weight: bold;
+				float: right;
+			}
+			.rarity {
+				font-size: 10px;
+			}
+			.rarity-basic {
+				color: #aaa;
+			}
+			.rarity-common {
+				color: white;
+			}
+			.rarity-rare {
+				color: #3c9af9;
+			}
+			.rarity-epic {
+				color: #ad49be;
+			}
+			.rarity-legendary {
+				color: #eba231;
+			}
+		}
 	}
+
+	&:hover .card-description {
+		opacity: 1;
+		transition: opacity 0.2s ease-in 0.5s;
+	}
+
 
 }
 
