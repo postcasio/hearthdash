@@ -43,7 +43,7 @@ module.exports = class CardView extends View
 
 		@find('.card-description').on 'transitionend', (e) =>
 			index = deckView.find('.card-view').index(this)
-			cards = ($(e.target).height() - 2) / @height()
+			cards = ($(e.target).height() - 1) / @height()
 			@blurredCards = deckView.find('.card-view:gt(' + index + ')').slice(0, cards)
 			@blurredCards.addClass 'blur'
 

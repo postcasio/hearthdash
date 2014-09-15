@@ -8,7 +8,7 @@ module.exports = class GameView extends View
 				@subview 'playerDeckView', new DeckView name: 'Your Deck', keepCards: true, sorted: true
 				@subview 'playerHandView', new DeckView name: 'Your Hand'
 			@div class: 'opponent', =>
-				@subview 'opponentHistoryView', new DeckView name: 'Opponent\'s History', trackTurns: true
+				@subview 'historyView', new DeckView name: 'Opponent\'s History', trackTurns: true
 				@subview 'opponentHandView', new DeckView name: 'Opponent\'s Hand'
 				@subview 'opponentDeckView', new DeckView name: 'Opponent\'s Deck', keepCards: true
 

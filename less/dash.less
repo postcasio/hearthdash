@@ -15,6 +15,7 @@ body {
 	color: @text-color;
 	font-family: @font-family;
 	font-size: @font-size;
+	line-height: @font-size * 1.2;
 	-webkit-user-select: none;
 	height: 100%;
 	overflow: scroll;
@@ -146,9 +147,32 @@ h1 {
   }
 }
 
+.card-view-colors(@color) {
+	background: @color;
+	&:hover {
+		background: lighten(@color, 10%);
+		.card-image .fade {
+			background: linear-gradient(to right,
+				lighten(@color, 10%) 0,
+				fadeout(lighten(@color, 10%), 25%) 50%,
+				fadeout(lighten(@color, 10%), 100%) 100%);
+		}
+	}
+
+	.fade {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(to right,
+			@color 0,
+			fadeout(@color, 25%) 50%,
+			fadeout(@color, 100%) 100%);
+	}
+}
+
 .card-view {
+	.card-view-colors(@player-deck-color);
 	cursor: pointer;
-	background: lighten(@background-color, 10%);
 	height: 26px;
 	overflow: hidden;
 	line-height: 26px;
@@ -161,17 +185,9 @@ h1 {
 	}
 
 	&:hover {
-		background: lighten(@background-color, 20%);
 		opacity: 1;
 		transition: opacity 0.1s ease-in;
 		overflow: visible;
-		.card-image .fade {
-			background: linear-gradient(to right,
-				lighten(@background-color, 20%) 0,
-				fadeout(lighten(@background-color, 20%), 25%) 50%,
-				fadeout(lighten(@background-color, 20%), 100%) 100%);
-
-		}
 	}
 
 	.card-count {
@@ -208,19 +224,6 @@ h1 {
 		height: 100%;
 		background-position: -65px -100px;
 		background-size: 255px auto;
-
-		&.loaded {
-
-		}
-		.fade {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			background: linear-gradient(to right,
-				lighten(@background-color, 10%) 0,
-				fadeout(lighten(@background-color, 10%), 25%) 50%,
-				fadeout(lighten(@background-color, 10%), 100%) 100%);
-		}
 	}
 
 	&.blur {
@@ -245,6 +248,7 @@ h1 {
 		b {
 			font-weight: bold;
 		}
+
 		.card-stats {
 			.atk-health {
 				font-weight: bold;
@@ -275,9 +279,13 @@ h1 {
 		opacity: 1;
 		transition: opacity 0.2s ease-in 0.5s;
 	}
-
-
 }
+
+.opponent .deck-view:not(.track-turns) .card-view,
+.opponent .deck-view.track-turns .card-view.controller-opponent {
+	.card-view-colors(@opponent-deck-color);
+}
+
 
 .field {
 	display: inline-block;
@@ -321,8 +329,50 @@ h1 {
 
 
 
-button, input, select {
+button, input:not([type='checkbox']), select {
 	.field();
+}
+
+input[type='checkbox'] {
+	width: 18px;
+	height: 18px;
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+	background: none;
+	border: none;
+	box-shadow: none;
+	-webkit-appearance: none;
+	margin: -2px 5px 0 0;
+
+	&:focus {
+		-webkit-appearance: none;
+		outline: none;
+	}
+
+	&::after {
+		.field();
+		padding: 0;
+		text-align: center;
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		line-height: 18px;
+	}
+
+	&:focus::after {
+		background: lighten(@background-color, 5%);
+		transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
+		box-shadow: 0 0 3px lighten(@background-color, 15%);
+		border-color: lighten(@background-color, 25%);
+	}
+
+	&:checked::after {
+		content: '\2714';
+	}
 }
 
 input {
@@ -429,6 +479,7 @@ button {
 	}
 }
 
+
 .alert-panel {
 	position: fixed;
 	bottom: 0;
@@ -472,7 +523,7 @@ button {
 			display: block;
 			margin-bottom: 10px;
 		}
-		input, select {
+		input:not([type='checkbox']), select {
 			display: block;
 			width: 100%;
 		}

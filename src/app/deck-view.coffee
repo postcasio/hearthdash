@@ -23,8 +23,13 @@ module.exports = class DeckView extends View
 		@cardCount = 0
 		@turn = 0
 		@currentTurn = null
+		@previousController = false
 		if @params.trackTurns
 			@addClass 'track-turns'
+
+	setName: (name) ->
+		@params.name = name
+		@update()
 
 	setTurn: (turn) ->
 		if turn isnt @turn
@@ -33,9 +38,10 @@ module.exports = class DeckView extends View
 			@deckList.prepend @currentTurn = $$ -> @div class: 'deck-turn', 'data-turn': turn
 			@currentTurn.hide()
 
-	addCard: (card, animate=true) ->
+	addCard: (card, animate=true, controller='player') ->
 		@cardCount++
 		cardView = new CardView id: card
+		cardView.addClass 'controller-' + controller
 		existed = false
 		if @cards[card]
 			existed = true
@@ -77,6 +83,7 @@ module.exports = class DeckView extends View
 		if animate
 			cardView.slideDown()
 
+		@previousController = controller
 		@update()
 
 		@cardCount
@@ -135,4 +142,7 @@ module.exports = class DeckView extends View
 		@update()
 
 	update: ->
-		@deckName.text @params.name + ' (' + @cardCount + ')'
+		text = @params.name
+		if @cardCount
+			text += ' (' + @cardCount + ')'
+		@deckName.text text

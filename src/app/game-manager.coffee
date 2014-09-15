@@ -46,6 +46,15 @@ module.exports = class GameManager
 
 		@messageBuffer = []
 		@entityControllers = []
+		@unifiedHistory = dash.config.unifiedHistory
+		@setHistoryTitle(@unifiedHistory)
+		dash.on 'config-changed:unifiedHistory', @setHistoryTitle
+
+	setHistoryTitle: (value) ->
+		if value
+			dash.dashboardView.gameView.historyView.setName 'History'
+		else
+			dash.dashboardView.gameView.historyView.setName 'Opponent\'s History'
 
 	reset: ->
 		@messageBuffer = []
@@ -63,7 +72,7 @@ module.exports = class GameManager
 		@gameView.playerHandView.empty()
 		@gameView.opponentDeckView.empty()
 		@gameView.opponentHandView.empty()
-		@gameView.opponentHistoryView.empty()
+		@gameView.historyView.empty()
 
 		@finishedSetup = false
 		@turns = 0
@@ -92,7 +101,7 @@ module.exports = class GameManager
 			@finishedSetup = true
 
 			@turns++
-			@gameView.opponentHistoryView.setTurn Math.floor(@turns / 2)
+			@gameView.historyView.setTurn Math.floor(@turns / 2)
 
 		entity = @getEntity message, false
 
@@ -119,13 +128,18 @@ module.exports = class GameManager
 					when zones.HAND
 						size = @gameView.opponentHandView.addCard entity.name
 					when zones.PLAY
-						size = @gameView.opponentHistoryView.addCard entity.name
+						if entity.getCardType() in [cardTypes.MINION, cardTypes.ABILITY, cardTypes.WEAPON]
+							size = @gameView.historyView.addCard entity.name, true, 'opponent'
+
 			else if entity.getController() == @playerControllerId
 				switch entity.getZone()
 					when zones.DECK
 						size = @gameView.playerDeckView.addCard entity.name
 					when zones.HAND
 						size = @gameView.playerHandView.addCard entity.name
+					when zones.PLAY
+						if @unifiedHistory and entity.getCardType() in [cardTypes.MINION, cardTypes.ABILITY, cardTypes.WEAPON]
+							size = @gameView.historyView.addCard entity.name, true, 'player'
 		else
 			entity.update message
 
@@ -183,7 +197,7 @@ module.exports = class GameManager
 					size = @gameView.opponentHandView.addCard entity.name
 				when zones.PLAY
 					if entity.getCardType() in [cardTypes.MINION, cardTypes.ABILITY, cardTypes.WEAPON]
-						size = @gameView.opponentHistoryView.addCard entity.name
+						size = @gameView.historyView.addCard entity.name, true, 'opponent'
 
 
 
@@ -226,7 +240,7 @@ module.exports = class GameManager
 		@entities[entity.id]
 
 	onReady: (message) ->
-		dash.dashboardView.gameView.opponentHistoryView.setTurn(1)
+		dash.dashboardView.gameView.historyView.setTurn(1)
 
 
 class Entity

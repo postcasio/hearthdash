@@ -13,6 +13,16 @@ module.exports = class SettingsView extends View
 					id: 'networkInterface'
 					class: 'config-field'
 
+			@div class: 'setting', =>
+				@label for: 'unifiedHistory', class: 'setting-name checkbox', =>
+					@input
+						type: 'checkbox'
+						outlet: 'unifiedHistory'
+						name: 'unifiedHistory'
+						id: 'unifiedHistory'
+						class: 'config-field'
+
+					@text 'Unified history'
 
 	getTitle: -> 'Settings'
 
@@ -20,8 +30,17 @@ module.exports = class SettingsView extends View
 
 		@setNetworkInterfaces()
 
+		if dash.config.unifiedHistory
+			@unifiedHistory.attr 'checked', 'checked'
+
 		@on 'change', '.config-field', ->
-			dash.setConfig $(this).attr('name'), $(this).val()
+			$this = $(this)
+			if $this.attr('type') is 'checkbox'
+				value = $this.is(':checked')
+			else
+				value = $this.val()
+			console.log 'setting ' + $this.attr('name') + ' to ' + value
+			dash.setConfig $this.attr('name'), value
 			dash.saveConfig()
 
 		dash.on 'config-changed:nodePath', =>
