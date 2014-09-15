@@ -81,10 +81,27 @@ module.exports = class DeckView extends View
 
 		@cardCount
 
-	removeCard: (card) ->
+	removeCard: (card, animate=false) ->
 		@cardCount--
 		if @cards[card]
 			@cards[card].decrement()
+			if animate
+				clone = @cards[card].clone()
+				$('body').append(clone)
+				pos = @cards[card].offset()
+				clone.css
+					'pointer-events': 'none'
+					'position': 'absolute'
+					'top': pos.top
+					'left': pos.left
+					'width': @cards[card].width()
+					'opacity', 1
+				clone.animate
+					'margin-top': '-13px'
+					'opacity': 0
+				, 700, ->
+
+
 			unless @params.keepCards or @cards[card].count
 				@cards[card].slideUp -> @remove()
 				delete @cards[card]

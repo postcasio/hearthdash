@@ -155,7 +155,6 @@ h1 {
 	position: relative;
 	margin-bottom: 1px;
 
-
 	&.used {
 		opacity: 0.2;
 		transition: opacity 0.5s ease-in;
@@ -163,6 +162,8 @@ h1 {
 
 	&:hover {
 		background: lighten(@background-color, 20%);
+		opacity: 1;
+		transition: opacity 0.1s ease-in;
 		overflow: visible;
 		.card-image .fade {
 			background: linear-gradient(to right,
@@ -222,20 +223,25 @@ h1 {
 		}
 	}
 
+	&.blur {
+		-webkit-filter: blur(2px);
+	}
+
 	.card-description {
 		position:absolute;
-		top: 27px;
+		top: 26px;
 		line-height: 27px;
 		left: 0;
 		width: 100%;
 		height: auto;
-		background: fadeout(black, 20%);
+		background: fadeout(black, 30%);
 		z-index: 100;
 		padding: 0 7px;
 		margin-bottom: 1px;
 		box-sizing: border-box;
 		pointer-events: none;
 		opacity: 0;
+
 		b {
 			font-weight: bold;
 		}

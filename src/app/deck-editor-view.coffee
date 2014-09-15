@@ -43,7 +43,7 @@ module.exports = class DeckEditorView extends View
 				previous = val
 
 		@playerDeckView.on 'click', '.card-view', (e) =>
-			@playerDeckView.removeCard $(e.target).view().card.id
+			@playerDeckView.removeCard $(e.target).view().card.id, true
 			@playerDeckView.update()
 
 		@searchResults.on 'click', '.card-view', (e) =>
