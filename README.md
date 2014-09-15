@@ -13,9 +13,11 @@ Hearthdash is a card tracking application for Hearthstone.
 * Sapped your opponents minion? Hearthdash will show it in their hand so you don't forget.
 * Easy to use deck editor.
 
-## Getting Started
+## Downloads
 
-Hearthdash isn't 100% ready yet, so you need to build it.
+You can download Hearthdash from the [releases](https://github.com/postcasio/hearthdash/releases) page. Currently only builds for OS X are available.
+
+## Building
 
 ### Requirements
 
