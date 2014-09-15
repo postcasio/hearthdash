@@ -5,10 +5,13 @@ _ = require 'underscore'
 
 module.exports = class DeckManager
 	constructor: (@dash) ->
-		@decks = season.readFileSync(path.join(@dash.dataPath, 'decks.cson'))
-
+		@deckPath = path.join(@dash.dataPath, 'decks.cson')
+		if fs.existsSync @deckPath
+			@decks = season.readFileSync @deckPath
+		else
+			@decks = {constructed: []}
 	save: ->
-		season.writeFileSync(path.join(@dash.dataPath, 'decks.cson'), @decks)
+		season.writeFileSync(@deckPath, @decks)
 
 	getConstructedDecks: ->
 		@decks.constructed
