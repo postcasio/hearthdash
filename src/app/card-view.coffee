@@ -63,7 +63,7 @@ module.exports = class CardView extends View
 				@cardCount.text @count
 
 			if @card.text
-				@cardDescription.html @card.text.replace(/\$(\d+)/, "$1").replace('\n', "\n");
+				@cardDescription.html @card.text.replace(/\$(\d+)/, "$1").replace('\\n', "<br>");
 
 			@cardName.text @card.name
 
