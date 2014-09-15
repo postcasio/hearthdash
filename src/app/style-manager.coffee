@@ -29,7 +29,7 @@ module.exports = class StyleManager
 				@addLinkTag cache
 			else
 				less.render src, options, (err, css) =>
-					fs.writeFile cache, css
+					fs.writeFileSync cache, css
 					@addLinkTag cache
 
 	addLinkTag: (cssPath) ->
