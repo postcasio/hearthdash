@@ -127,7 +127,7 @@ module.exports = class GameManager
 						size = @gameView.opponentDeckView.addCard entity.name
 					when zones.HAND
 						size = @gameView.opponentHandView.addCard entity.name
-					when zones.PLAY
+					when zones.PLAY, zones.SECRET
 						if entity.getCardType() in [cardTypes.MINION, cardTypes.ABILITY, cardTypes.WEAPON]
 							size = @gameView.historyView.addCard entity.name, true, 'opponent'
 
@@ -137,7 +137,7 @@ module.exports = class GameManager
 						size = @gameView.playerDeckView.addCard entity.name
 					when zones.HAND
 						size = @gameView.playerHandView.addCard entity.name
-					when zones.PLAY
+					when zones.PLAY, zones.SECRET
 						if @unifiedHistory and entity.getCardType() in [cardTypes.MINION, cardTypes.ABILITY, cardTypes.WEAPON]
 							size = @gameView.historyView.addCard entity.name, true, 'player'
 		else
@@ -195,7 +195,7 @@ module.exports = class GameManager
 					size = @gameView.opponentDeckView.addCard entity.name
 				when zones.HAND
 					size = @gameView.opponentHandView.addCard entity.name
-				when zones.PLAY
+				when zones.PLAY, zones.SECRET
 					if entity.getCardType() in [cardTypes.MINION, cardTypes.ABILITY, cardTypes.WEAPON]
 						size = @gameView.historyView.addCard entity.name, true, 'opponent'
 
