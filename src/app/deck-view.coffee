@@ -110,7 +110,7 @@ module.exports = class DeckView extends View
 
 
 			unless @params.keepCards or @cards[card].count
-				@cards[card].slideUp -> @remove()
+				@cards[card].slideUp -> $(this).view().remove()
 				delete @cards[card]
 
 

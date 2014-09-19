@@ -100,6 +100,11 @@ module.exports = class CardView extends View
 				'data-name': 'Unknown'
 				'data-cost': ''
 
+	remove: ->
+		if @blurredCards
+			@blurredCards.removeClass 'blur'
+		super
+
 	increment: ->
 		@count++
 		@update()
