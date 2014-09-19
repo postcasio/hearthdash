@@ -1,5 +1,4 @@
-{View} = require 'space-pen'
-$ = require 'jquery'
+{View, $} = require 'space-pen'
 
 
 rarity =

@@ -3,7 +3,7 @@ path = require 'path'
 crypto = require 'crypto'
 
 less = require 'less'
-$ = require 'jquery'
+{$} = require 'space-pen'
 
 module.exports = class StyleManager
 	lessCachePath: null

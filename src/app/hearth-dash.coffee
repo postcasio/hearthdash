@@ -1,9 +1,8 @@
 fs = require 'fs'
 path = require 'path'
 
-$ = require 'jquery'
 season = require 'season'
-
+{$} = require 'space-pen'
 StyleManager = require './style-manager'
 DashboardView = require './dashboard-view'
 CardView = require './card-view'
