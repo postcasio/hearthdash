@@ -1,6 +1,6 @@
 {
   "name": "Hearthdash",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "src/browser/boot.js",
   "dependencies": {
     "coffee-script": "~1.8.0",

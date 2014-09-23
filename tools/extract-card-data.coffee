@@ -11,31 +11,22 @@ unless argv['card-dir']
 
 lang = argv.lang ? 'enUS'
 
-pattern = path.resolve(path.join(argv['card-dir'], '*.txt'))
-
-cards = glob.sync(pattern)
-
-cardData = {}
-
-total = cards.length
-parsed = 0
-
-for card in cards
-	xml2js.parseString fs.readFileSync(card, 'utf-8'), (err, result) ->
+cards = fs.readFileSync path.resolve(path.join argv['card-dir'], lang + '.txt'), 'utf-8'
+xml2js.parseString cards, (err, result) ->
+	cardData = {}
+	for card in result.CardDefs.Entity
 		data =
-			id: result.Entity.$.CardID
+			id: card.$.CardID
 
-		for tag in result.Entity.Tag
+		for tag in card.Tag
 			switch tag.$.name
 				when 'CardName'
-					data.name = tag[lang]?[0]
+					data.name = tag._
 				when 'CardTextInHand'
-					data.text = tag[lang]?[0]
+					data.text = tag.$.value
 				else
 					data[tag.$.name.toLowerCase()] = tag.$.value
 
 		cardData[data.id] = data
 
-		if ++parsed == cards.length
-			fs.writeFileSync(path.join(__dirname, '..', 'data', 'cards.json'), JSON.stringify(cardData, null, "\t"))
-			process.exit()
+	fs.writeFileSync(path.join(__dirname, '..', 'data', 'cards.json'), JSON.stringify(cardData, null, "\t"))
