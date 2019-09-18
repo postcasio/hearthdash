@@ -1,3 +1,7 @@
+I learned a lot about reverse engineering network protocols when I made this. I also learned a lot about separation of concerns. The code in this repository is not particularly good, but, I still like what I made.
+
+***
+
 # Hearthdash
 
 Hearthdash is a card tracking application for Hearthstone.
