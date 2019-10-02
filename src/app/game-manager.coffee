@@ -229,6 +229,7 @@ module.exports = class GameManager
 					size = @gameView.opponentHandView.addCard entity.name
 
 	onCreateGame: (message) ->
+		@reset()#need call this, otherwise the entities is null
 
 	getEntity: (entity, update=true) ->
 		if @entities[entity.id]

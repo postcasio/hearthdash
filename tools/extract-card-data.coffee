@@ -19,13 +19,13 @@ xml2js.parseString cards, (err, result) ->
 			id: card.$.CardID
 
 		for tag in card.Tag
-			switch tag.$.name
-				when 'CardName'
+			switch tag.$.enumID
+				when '185'
 					data.name = tag._
-				when 'CardTextInHand'
-					data.text = tag.$.value
+				when '184'
+					data.text = tag._
 				else
-					data[tag.$.name.toLowerCase()] = tag.$.value
+					data[tag.$.enumID] = tag.$.value
 
 		cardData[data.id] = data
 

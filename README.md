@@ -26,7 +26,7 @@ You can download Hearthdash from the [releases](https://github.com/postcasio/hea
 ### Requirements
 
 * OS X, Windows
-* nodejs v0.10
+* nodejs v0.12
 * coffee-script
 * protobuf
 
@@ -38,10 +38,18 @@ Homebrew is the best way to install Node and protobufs on OS X:
 
 ### Building
 
-    cd tools
+    npm install
+    cd capture
+    npm install
+    cd ../tools
     npm install
     coffee build.coffee --card-xml-path=<path>
 
-Where `path` is the path to the `cardxml0.unity3d` file in the Hearthstone Data directory.
+Where `path` is the path to the `cardxml0.unity3d` file in the Hearthstone Data directory. If you don't set this paramater, default value is /Applications/Hearthstone/Data/OSX/cardxml0.unity3d
 
 Hearthdash should now be in the `build` directory.
+
+You probably need run with sudo to make sure it can capture network packs.
+
+    sudo build/Hearthdash.app/Contents/MacOS/Atom
+
